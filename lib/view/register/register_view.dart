@@ -1,15 +1,19 @@
+import 'dart:convert';
+
 import 'package:MoneyTracker/locator.dart';
 import 'package:MoneyTracker/routing/resources/images.dart';
 import 'package:MoneyTracker/routing/resources/styles.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:stacked/stacked.dart';
+import 'package:MoneyTracker/globals.dart';
 
 class registerView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ViewModelBuilder.reactive(
+      body: ViewModelBuilder<RegisterViewModel>.nonReactive(
         viewModelBuilder: () => RegisterViewModel(),
         builder: (context, model, child) => Container(
             child: Column(
@@ -27,13 +31,23 @@ class registerView extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 30,vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
               child: Form(
                 child: Column(
                   children: [
                     TextFormField(
+                      style: TextStyles.input,
+                      onChanged: (value) => model.name = value,
+                      decoration:
+                          Decorations.input.copyWith(labelText: 'Name Surname'),
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    TextFormField(
                       keyboardType: TextInputType.emailAddress,
                       style: TextStyles.input,
+                      onChanged: (value) => model.email = value,
                       decoration:
                           Decorations.input.copyWith(labelText: 'E-mail'),
                     ),
@@ -42,6 +56,16 @@ class registerView extends StatelessWidget {
                     ),
                     TextFormField(
                       style: TextStyles.input,
+                      onChanged: (value) => model.username = value,
+                      decoration:
+                          Decorations.input.copyWith(labelText: 'Username'),
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    TextFormField(
+                      style: TextStyles.input,
+                      onChanged: (value) => model.password = value,
                       obscureText: true,
                       decoration: Decorations.input.copyWith(
                           labelText: 'Password',
@@ -52,6 +76,8 @@ class registerView extends StatelessWidget {
                     ),
                     TextFormField(
                       style: TextStyles.input,
+                      obscureText: true,
+                      onChanged: (value) => model.rePassword = value,
                       decoration: Decorations.input.copyWith(
                           labelText: 'Re-enter Password',
                           contentPadding: EdgeInsets.zero),
@@ -100,7 +126,26 @@ class registerView extends StatelessWidget {
 }
 
 class RegisterViewModel extends ChangeNotifier {
-  void sendForm() {}
+  String name;
+  String email;
+  String password;
+  String rePassword;
+  String username;
+
+  void sendForm() async {
+    if (password != rePassword) {
+      print("Error");
+      return;
+    }
+    Response res = await post(globals.URL + 'user/signup',
+        headers: {'content-type': 'application/json'},
+        body: jsonEncode({
+          'name': this.name,
+          'email': this.email,
+          'password': this.password,
+          'username': this.username
+        }));
+  }
 
   void navigateLogin() {
     navigator.navigateTo('/login', replace: true);
