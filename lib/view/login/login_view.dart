@@ -5,29 +5,22 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 
-class registerView extends StatelessWidget {
+class loginView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: ViewModelBuilder.reactive(
-        viewModelBuilder: () => RegisterViewModel(),
+        viewModelBuilder: () => LoginViewModel(),
         builder: (context, model, child) => Container(
             child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(height: 50),
-            Flexible(
-              child: Hero(
-                tag: 'app-icon',
-                child: Container(
-                  height: 150,
-                  child: Image.asset(Images.icon),
-                ),
-              ),
-            ),
+            Container(
+                height: 100,
+                child: Hero(tag: 'app-icon', child: Image.asset(Images.icon))),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 30,vertical: 10),
+              padding: const EdgeInsets.all(30.0),
               child: Form(
                 child: Column(
                   children: [
@@ -40,21 +33,28 @@ class registerView extends StatelessWidget {
                     SizedBox(
                       height: 15,
                     ),
-                    TextFormField(
-                      style: TextStyles.input,
-                      obscureText: true,
-                      decoration: Decorations.input.copyWith(
-                          labelText: 'Password',
-                          contentPadding: EdgeInsets.zero),
-                    ),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    TextFormField(
-                      style: TextStyles.input,
-                      decoration: Decorations.input.copyWith(
-                          labelText: 'Re-enter Password',
-                          contentPadding: EdgeInsets.zero),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        TextFormField(
+                          style: TextStyles.input,
+                          obscureText: true,
+                          decoration: Decorations.input.copyWith(
+                              labelText: 'Password',
+                              contentPadding: EdgeInsets.zero),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        RichText(
+                          text: TextSpan(
+                            text: 'Forget Your Password?',
+                            style: TextStyles.infoClickable,
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = model.forgetPassword,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -62,16 +62,14 @@ class registerView extends StatelessWidget {
             ),
             Container(
               width: double.infinity,
-              padding: EdgeInsets.fromLTRB(30, 10, 30, 10),
+              padding: EdgeInsets.fromLTRB(30, 0, 30, 10),
               child: MaterialButton(
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18),
-                  // side:BorderSide(color: Colors.blue)
-                ),
+                    borderRadius: BorderRadius.circular(18)),
                 onPressed: model.sendForm,
                 color: Colors.red,
                 child: Text(
-                  'Register',
+                  'Login',
                   style: TextStyles.button,
                   textAlign: TextAlign.center,
                 ),
@@ -81,10 +79,10 @@ class registerView extends StatelessWidget {
               text: TextSpan(
                 style: TextStyles.info,
                 children: [
-                  TextSpan(text: 'If you have already an account'),
+                  TextSpan(text: 'If you do not have an account'),
                   const WidgetSpan(child: SizedBox(width: 4)),
                   TextSpan(
-                    text: 'Go To Login',
+                    text: 'Go To Register',
                     style: TextStyles.infoClickable,
                     recognizer: TapGestureRecognizer()
                       ..onTap = model.navigateLogin,
@@ -99,10 +97,14 @@ class registerView extends StatelessWidget {
   }
 }
 
-class RegisterViewModel extends ChangeNotifier {
+class LoginViewModel extends ChangeNotifier {
   void sendForm() {}
 
   void navigateLogin() {
-    navigator.navigateTo('/login', replace: true);
+    navigator.navigateTo('/register', replace: true);
+  }
+
+  void forgetPassword(){
+    
   }
 }
