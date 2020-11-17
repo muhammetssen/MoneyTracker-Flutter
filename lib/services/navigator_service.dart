@@ -7,10 +7,10 @@ class NavigatorService {
 
   NavigatorState get currentState => navigatorKey.currentState;
 
-  Future<T> navigateTo<T>(String routeName, {bool replace = false}) {
+  Future<T> navigateTo<T>(String routeName, {bool replace = false, parameters }) {
     return replace
-        ? currentState.pushReplacementNamed(routeName)
-        : currentState.pushNamed(routeName);
+        ? currentState.pushReplacementNamed(routeName,arguments: parameters)
+        : currentState.pushNamed(routeName,arguments: parameters);
   }
 
   void goBack<T extends Object>([T result]) => currentState.pop(result);

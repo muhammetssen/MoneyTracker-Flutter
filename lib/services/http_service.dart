@@ -7,7 +7,6 @@ class HttpService {
   Future postRequest(String endPoint, {Map<String, String> body}) async {
     Response res = await post(globals.URL + endPoint,
         headers: {'content-type': 'application/json'}, body: jsonEncode(body));
-
     var resBody = json.decode(res.body);
     return resBody;
   }

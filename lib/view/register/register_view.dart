@@ -1,18 +1,64 @@
 import 'package:MoneyTracker/locator.dart';
 import 'package:MoneyTracker/routing/resources/images.dart';
 import 'package:MoneyTracker/routing/resources/styles.dart';
+import 'package:MoneyTracker/view/register/register_viewModel.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:stacked/stacked.dart';
 
 class registerView extends StatelessWidget {
+  static void showAlertDialog(BuildContext context, String message) {
+    showGeneralDialog(
+      context: context,
+      transitionDuration: Duration(milliseconds: 200),
+      barrierDismissible: true,
+      barrierLabel: '',
+      // ignore: missing_return
+      pageBuilder: (
+        context,
+        animation1,
+        animation2,
+      ) {},
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        return Transform.scale(
+            scale: animation.value,
+            child: Opacity(
+              opacity: animation.value,
+              child: AlertDialog(
+                shape: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16.0)),
+                content: Text(message,style: TextStyles.info.copyWith(fontSize: 20,fontWeight: FontWeight.w400),),
+                actions: [ MaterialButton(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18),
+                    // side:BorderSide(color: Colors.blue)
+                  ),
+                  onPressed: () => navigator.goBack(),
+                  color: Colors.red,
+                  child: Text(
+                    'Okay',
+                    style: TextStyles.button,
+                    textAlign: TextAlign.center,
+                  ),
+                ),],
+              ),
+            ));
+      },
+    );
+    // print("a");
+    // Future.delayed(Duration(seconds: 1)).then((value) => navigator.goBack());
+    // navigator.goBack();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: ViewModelBuilder<RegisterViewModel>.nonReactive(
-          viewModelBuilder: () => RegisterViewModel(),
-          builder: (context, model, child) => Container(
+      body: ViewModelBuilder<RegisterViewModel>.reactive(
+        viewModelBuilder: () => RegisterViewModel(),
+        builder: (context, model, child) => ModalProgressHUD(
+          inAsyncCall: model.saving,
+          child: Container(
               child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -90,7 +136,7 @@ class registerView extends StatelessWidget {
                     borderRadius: BorderRadius.circular(18),
                     // side:BorderSide(color: Colors.blue)
                   ),
-                  onPressed: model.sendForm,
+                  onPressed: () => model.sendForm(context),
                   color: Colors.red,
                   child: Text(
                     'Register',
@@ -119,32 +165,5 @@ class registerView extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-class RegisterViewModel extends ChangeNotifier {
-  String name;
-  String email;
-  String password;
-  String rePassword;
-  String username;
-
-  void sendForm() async {
-    if (password != rePassword) {
-      print("Error");
-      return;
-    }
-    Map<String, String> formData = {
-      'name': this.name,
-      'email': this.email,
-      'password': this.password,
-      'username': this.username
-    };
-    var res = await httpService.postRequest('user/signup', body: formData);
-    print(res['message']);
-  }
-
-  void navigateLogin() {
-    navigator.navigateTo('/login', replace: true);
   }
 }

@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
       // builder: (context, child) => Scaffold(body: child),
       initialRoute: '/intro',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.dark(),
+      // theme: ThemeData.dark(),
       routes: namedRoutes.routes,
     );
   }
